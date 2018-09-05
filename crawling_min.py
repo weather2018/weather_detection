@@ -11,7 +11,11 @@ def now():
     now = now.split(' ')
     yyyymmdd = now[0].replace('-', '')
     hhmmss = now[1].split('.')[0].split(':')[:2]
-    return yyyymmdd, hhmmss
+    timeDic={'year':yyyymmdd[0:4],
+             'month':yyyymmdd[4:6], #str(int(yyyymmdd[4:6]) - 1),
+             'day':yyyymmdd[6:8],   #str(int()),
+             'hhmmss':hhmmss}
+    return timeDic
 #첫 페이지 로딩
 def pageLoad():
     driver = webdriver.Chrome('../chromedriver.exe')
@@ -21,36 +25,33 @@ def pageLoad():
     return driver
 
 #조회 파라미터 셋팅
-def setPram(driver, yyyymmdd, hhmmss):
+def setPram(driver, **timeDic):
+    print(timeDic)
     #   1. set Search Type
     data_type = 'F00503'  # 분 자료
     set_time = driver.find_element_by_xpath("//option[@value='" + data_type + "']")
     set_time.click()
-
-    set_year = yyyymmdd[0:4]
-    set_month = str(int(yyyymmdd[4:6]) - 1)
-    set_day = str(int(yyyymmdd[6:8]))
 
     #       달력 프로그램 실행
     script_startDt = "datePickerShow('startDt')"
     driver.execute_script(script_startDt)
 
     #       start 파라미터 셋팅
-    driver.find_element_by_xpath('//*[@id="ui-datepicker-div"]/div[1]/div/select[1]/option[@value=' + set_year + ']').click()
-    driver.find_element_by_xpath('//*[@id="ui-datepicker-div"]/div[1]/div/select[2]/option[@value=' + set_month + ']').click()
-    driver.find_element_by_xpath('//a[contains(text(), "{0}") and @class="ui-state-default"]'.format(set_day)).click()
+    driver.find_element_by_xpath('//*[@id="ui-datepicker-div"]/div[1]/div/select[1]/option[@value=' + timeDic['year'] + ']').click()
+    driver.find_element_by_xpath('//*[@id="ui-datepicker-div"]/div[1]/div/select[2]/option[@value=' + str(int(timeDic['month']) - 1) + ']').click()
+    driver.find_element_by_xpath('//a[contains(text(), "{0}") and @class="ui-state-default"]'.format(str(int(timeDic['day']))) ).click()
 
     script_endDt = "datePickerShow('endDt')"
     driver.execute_script(script_endDt)
 
     #       end 파라미터 셋팅
-    driver.find_element_by_xpath('//*[@id="ui-datepicker-div"]/div[1]/div/select[1]/option[@value=' + set_year + ']').click()
-    driver.find_element_by_xpath('//*[@id="ui-datepicker-div"]/div[1]/div/select[2]/option[@value=' + set_month + ']').click()
-    driver.find_element_by_xpath('//a[contains(text(), "{0}") and @class="ui-state-default"]'.format(set_day)).click()
+    driver.find_element_by_xpath('//*[@id="ui-datepicker-div"]/div[1]/div/select[1]/option[@value=' + timeDic['year'] + ']').click()
+    driver.find_element_by_xpath('//*[@id="ui-datepicker-div"]/div[1]/div/select[2]/option[@value=' + str(int(timeDic['month']) - 1) + ']').click()
+    driver.find_element_by_xpath('//a[contains(text(), "{0}") and @class="ui-state-default"]'.format(str(int(timeDic['day']))) ).click()
 
     #       지점명으로 선택
     driver.find_element_by_xpath('//*[@id="btnStn1"]').click()
-    time.sleep(1)
+    time.sleep(2)
 
     #       지점명 전체 선택
     driver.find_element_by_xpath('//*[@id="ztree_1_check"]').click()
@@ -58,7 +59,7 @@ def setPram(driver, yyyymmdd, hhmmss):
 
     #       요소 선택
     driver.find_element_by_xpath('//*[@id="gubun"]').click()
-    time.sleep(1)
+    time.sleep(2)
 
     #       요소 전체선택
     driver.find_element_by_xpath('//*[@id="ztree_1_check"]').click()
@@ -70,14 +71,14 @@ def setPram(driver, yyyymmdd, hhmmss):
     driver.find_element_by_xpath('//*[@id="dsForm"]/div[3]/a[1]/span').click()
     time.sleep(3)
 
-def crawlingData(driver, yyyymmdd, hhmmss):
+def crawlingData(driver, **timeDic):
     #   4. Source crawling
     header = []
     dataset = []
     for page in count(start=1):#range(1360,1377):
         script = 'goPage(%d)' % page
         driver.execute_script(script)
-        time.sleep(3)
+        time.sleep(2)
 
         html = driver.page_source
         html = html.replace('<td style="width:100px;"></td>', '<td style="width:100px;">0</td>')
@@ -106,14 +107,14 @@ def crawlingData(driver, yyyymmdd, hhmmss):
 
     result = pd.DataFrame(dataset, columns=header)
     result.to_csv(
-        '../data/weatherByMin_{0}.csv'.format(yyyymmdd),
+        '../data/weatherByMin_{0}.csv'.format(timeDic['year']+timeDic['month']+timeDic['day']),
         encoding='utf-8',
         mode='w',
         index=False
     )
 
 if __name__=='__main__':
-    yyyymmdd, hhmmss = now()
+    timeDic = now()
     driver = pageLoad()
-    setPram(driver, yyyymmdd, hhmmss)
-    crawlingData(driver, yyyymmdd, hhmmss)
+    setPram(driver=driver, **timeDic)
+    crawlingData(driver=driver, **timeDic)
