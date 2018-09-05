@@ -5,16 +5,14 @@ from bs4 import BeautifulSoup
 import pandas as pd
 from itertools import count
 
-
-#첫 페이지 로딩
-
+#현재시간으로 년월일 초기화
 def now():
     now = str(datetime.now() - timedelta(days=1))
     now = now.split(' ')
     yyyymmdd = now[0].replace('-', '')
     hhmmss = now[1].split('.')[0].split(':')[:2]
     return yyyymmdd, hhmmss
-
+#첫 페이지 로딩
 def pageLoad():
     driver = webdriver.Chrome('../chromedriver.exe')
     url = 'https://data.kma.go.kr/data/grnd/selectAsosRltmList.do?pgmNo=36'
@@ -23,17 +21,11 @@ def pageLoad():
     return driver
 
 #조회 파라미터 셋팅
-def setPram(driver):
+def setPram(driver, yyyymmdd, hhmmss):
     #   1. set Search Type
     data_type = 'F00503'  # 분 자료
     set_time = driver.find_element_by_xpath("//option[@value='" + data_type + "']")
     set_time.click()
-
-    #       현재시간으로 년월일 초기화
-    now = str(datetime.now() - timedelta(days=1))
-    now = now.split(' ')
-    yyyymmdd = now[0].replace('-', '')
-    hhmmss = now[1].split('.')[0].split(':')[:2]
 
     set_year = yyyymmdd[0:4]
     set_month = str(int(yyyymmdd[4:6]) - 1)
@@ -121,7 +113,7 @@ def crawlingData(driver, yyyymmdd, hhmmss):
     )
 
 if __name__=='__main__':
+    yyyymmdd, hhmmss = now()
     driver = pageLoad()
-    setPram(driver)
-    yyyymmdd, hhmmss=now()
+    setPram(driver, yyyymmdd, hhmmss)
     crawlingData(driver, yyyymmdd, hhmmss)
