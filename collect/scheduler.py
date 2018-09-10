@@ -1,8 +1,8 @@
 from apscheduler.jobstores.base import JobLookupError
 from apscheduler.schedulers.background import BackgroundScheduler
-from collect import simulator
-from collect import crawling_min
+from collect import crawling_day, crawling_min, simulator
 import time
+from datetime import datetime, timedelta
 
 class Scheduler(object):
 
@@ -31,12 +31,19 @@ class Scheduler(object):
         if type =='interval':
             self.sched.add_job(simulator.main, trigger=type, seconds=60, id=job_id)
             # self.sched.add_job(self.hello, type, seconds=300, id=job_id, args=(type, job_id))
-        elif type == 'cron':
+        elif (type == 'cron' and  job_id=='2'):
             self.sched.add_job(crawling_min.main,
                                trigger=type,
                                day_of_week='mon-sun',
-                               hour=15, minute=31,
+                               hour=7, minute=00,
                                id=job_id )
+        elif (type == 'cron' and  job_id=='3'):
+            self.sched.add_job(crawling_day.main,
+                               trigger=type,
+                               day_of_week='mon-sun',
+                               hour=7, minute=00,
+                               id=job_id)
+
     def test(self):
         print('[%s] Schedule TEST call def ' % str(time.localtime()))
 
@@ -44,5 +51,6 @@ if __name__=='__main__':
     sched = Scheduler()
     sched.scheduler(type='interval',job_id='1')
     sched.scheduler(type='cron',job_id='2')
+    sched.scheduler(type='cron',job_id='3')
     while True:
         time.sleep(1)
