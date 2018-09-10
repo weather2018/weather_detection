@@ -15,7 +15,7 @@ DAY = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]      # 월별 마지막 �
 # 현재 날짜를 기준으로 어제 날짜의 year, month, day 세팅
 set_year = now[:4]
 set_month = now[5:7] if '0' not in now[5:7] else now[6:7]
-set_day = int(now[8:10])-1 if '0' not in now[8:10] else int(now[9:10])-1
+set_day = int(now[8:10])-1 if '0' not in now[8:9] else int(now[9:10])-1
 
 # 첫 페이지 로딩
 driver = webdriver.Chrome('D:/chromedriver.exe')
