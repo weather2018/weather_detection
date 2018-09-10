@@ -16,7 +16,7 @@ class crawling_min():
                         'dd': yyyymmdd[6:8],  # str(int()),
                         'hhmm': hhmmss[0] + hhmmss[1]}
 
-        self.driver = webdriver.Chrome('../chromeself.driver.exe')
+        self.driver = webdriver.Chrome('../chromedriver.exe')
         url = 'https://data.kma.go.kr/data/grnd/selectAsosRltmList.do?pgmNo=36'
         self.driver.get(url)
 

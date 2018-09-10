@@ -3,7 +3,6 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from collect import simulator
 from collect import crawling_min
 import time
-from datetime import datetime, timedelta
 
 class Scheduler(object):
 
