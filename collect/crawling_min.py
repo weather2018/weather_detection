@@ -9,7 +9,7 @@ from selenium.webdriver.chrome.options import Options
 def setPram(yyyy,mm,dd):
     chrome_options = Options()
     chrome_options.add_argument('--headless')
-    driver = webdriver.Chrome(executable_path='../chromedriver.exe'
+    driver = webdriver.Chrome(executable_path='../chromedriver'
                               # ,chrome_options=chrome_options
                               )
     driver.get('https://data.kma.go.kr/data/grnd/selectAsosRltmList.do?pgmNo=36')
