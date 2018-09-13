@@ -9,7 +9,7 @@ def setData(yyyy,mm,dd,hhss):
 
     # 특정 시간대의 데이터 selection
     liveData = df.loc[ df['시간']==time,: ]
-    print(liveData)
+    # print(liveData)
     return liveData
 
 def saveData(liveData):

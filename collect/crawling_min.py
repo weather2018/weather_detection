@@ -2,9 +2,18 @@ import time
 from bs4 import BeautifulSoup
 import pandas as pd
 from itertools import count
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
 
 #조회 파라미터 셋팅
-def setPram(yyyy,mm,dd,driver):
+def setPram(yyyy,mm,dd):
+    chrome_options = Options()
+    chrome_options.add_argument('--headless')
+    driver = webdriver.Chrome(executable_path='../chromedriver.exe'
+                              # ,chrome_options=chrome_options
+                              )
+    driver.get('https://data.kma.go.kr/data/grnd/selectAsosRltmList.do?pgmNo=36')
+
     #   1. set Search Type
     data_type = 'F00503'  # 분 자료
     set_time = driver.find_element_by_xpath("//option[@value='" + data_type + "']")
@@ -49,6 +58,8 @@ def setPram(yyyy,mm,dd,driver):
     driver.find_element_by_xpath('//*[@id="dsForm"]/div[3]/a[1]/span').click()
     time.sleep(5)
 
+    return driver
+
 def crawlingData(yyyy, mm, dd, driver):
     #   4. Source crawling
     header = []
@@ -91,9 +102,9 @@ def crawlingData(yyyy, mm, dd, driver):
         index=False
     )
 
-def main(yyyy,mm,dd,driver):
+def main(yyyy,mm,dd):
     # cm = crawling_min()
-    setPram(yyyy, mm, dd, driver)
+    driver = setPram(yyyy, mm, dd)
     crawlingData(yyyy, mm, dd, driver)
 
 # if __name__=='__main__':
