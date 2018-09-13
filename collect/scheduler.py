@@ -1,14 +1,16 @@
 from apscheduler.jobstores.base import JobLookupError
 from apscheduler.schedulers.background import BackgroundScheduler
+# from collect import crawling_day, crawling_min, simulator
 from collect import crawling_day, crawling_min, simulator
 import time
-from datetime import datetime, timedelta
 
 class Scheduler(object):
 
-    def __init__(self):
+    def __init__(self, hh=9, ss=20):
         self.sched = BackgroundScheduler()
         self.sched.start()
+        self.hh = hh
+        self.mm = ss
         self.job_id = ''
 
     # 클래스가 종료될때, 모든 job들을 종료시켜줍니다.
@@ -35,17 +37,25 @@ class Scheduler(object):
             self.sched.add_job(crawling_min.main,
                                trigger=type,
                                day_of_week='mon-sun',
-                               hour=7, minute=00,
+                               hour=self.hh, minute=self.mm,
                                id=job_id )
         elif (type == 'cron' and  job_id=='3'):
             self.sched.add_job(crawling_day.main,
                                trigger=type,
                                day_of_week='mon-sun',
-                               hour=7, minute=00,
+                               hour=self.hh, minute=self.mm,
                                id=job_id)
 
     def test(self):
         print('[%s] Schedule TEST call def ' % str(time.localtime()))
+
+def main(hh,ss):
+    sched = Scheduler(hh,ss)
+    sched.scheduler(type='interval',job_id='1')
+    sched.scheduler(type='cron',job_id='2')
+    sched.scheduler(type='cron',job_id='3')
+    while True:
+        time.sleep(1)
 
 if __name__=='__main__':
     sched = Scheduler()
