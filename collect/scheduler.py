@@ -1,17 +1,29 @@
 from apscheduler.jobstores.base import JobLookupError
 from apscheduler.schedulers.background import BackgroundScheduler
-# from collect import crawling_day, crawling_min, simulator
 from collect import crawling_day, crawling_min, simulator
 import time
+from datetime import datetime, timedelta
+from selenium import webdriver
 
 class Scheduler(object):
 
-    def __init__(self, hh=9, ss=20):
+    def __init__(self, hh=11, ss=29):
         self.sched = BackgroundScheduler()
         self.sched.start()
         self.hh = hh
         self.mm = ss
         self.job_id = ''
+
+        now = str(datetime.now() - timedelta(days=1))
+        now = now.split(' ')
+        yyyymmdd = now[0].replace('-', '')
+        hhmmss = now[1].split('.')[0].split(':')[:2]
+        self.timeDic = {'yyyy': yyyymmdd[0:4],
+                        'mm': yyyymmdd[4:6],  # str(int(yyyymmdd[4:6]) - 1),
+                        'dd': yyyymmdd[6:8],  # str(int()),
+                        'hhmm': hhmmss[0] + hhmmss[1]}
+
+        self.url = 'https://data.kma.go.kr/data/grnd/selectAsosRltmList.do?pgmNo=36'
 
     # 클래스가 종료될때, 모든 job들을 종료시켜줍니다.
     def __del__(self):
@@ -29,22 +41,37 @@ class Scheduler(object):
             return
 
     def scheduler(self, type, job_id):
-        print('%s Scheduler Start' % type)
+        print("%s scheduler process_id[%s] : %d" % (type, job_id, time.localtime().tm_sec))
         if type =='interval':
-            self.sched.add_job(simulator.main, trigger=type, seconds=60, id=job_id)
+            self.sched.add_job(simulator.main,
+                               trigger=type,
+                               seconds=5,
+                               id=job_id,
+                               args=(self.timeDic['yyyy'],
+                                     self.timeDic['mm'],
+                                     self.timeDic['dd'],
+                                     self.timeDic['hhmm']))
             # self.sched.add_job(self.hello, type, seconds=300, id=job_id, args=(type, job_id))
         elif (type == 'cron' and  job_id=='2'):
+            print("%s scheduler process_id[%s] : %d" % (type, job_id, time.localtime().tm_sec))
+            driver = webdriver.Chrome('../chromedriver.exe')
+            driver.get(self.url)
             self.sched.add_job(crawling_min.main,
                                trigger=type,
                                day_of_week='mon-sun',
                                hour=self.hh, minute=self.mm,
-                               id=job_id )
+                               id=job_id,
+                               args=(self.timeDic['yyyy'],
+                                     self.timeDic['mm'],
+                                     self.timeDic['dd'],
+                                     driver))
         elif (type == 'cron' and  job_id=='3'):
             self.sched.add_job(crawling_day.main,
                                trigger=type,
                                day_of_week='mon-sun',
                                hour=self.hh, minute=self.mm,
-                               id=job_id)
+                               id=job_id
+                               )
 
     def test(self):
         print('[%s] Schedule TEST call def ' % str(time.localtime()))
@@ -60,7 +87,7 @@ def main(hh,ss):
 if __name__=='__main__':
     sched = Scheduler()
     sched.scheduler(type='interval',job_id='1')
-    sched.scheduler(type='cron',job_id='2')
-    sched.scheduler(type='cron',job_id='3')
+    # sched.scheduler(type='cron',job_id='2')
+    # sched.scheduler(type='cron',job_id='3')
     while True:
         time.sleep(1)

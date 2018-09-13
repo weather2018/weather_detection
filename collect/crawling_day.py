@@ -7,7 +7,7 @@ import pandas as pd
 
 def main():
     url = 'https://data.kma.go.kr/data/grnd/selectAsosRltmList.do?pgmNo=36'
-    DIRECTORY = '../data'
+    DIRECTORY = '../data/day'
 
     now = str(datetime.datetime.now())      # 2018-09-03 20:37:13.008451
     today = now.replace('-', '')[:6]        # 201809
@@ -52,11 +52,11 @@ def main():
     time.sleep(2)
 
     # make year directory
-    try:
-        if not (os.path.isdir((DIRECTORY + '/year=%s') % set_year)):
-            os.makedirs(os.path.join((DIRECTORY + '/year=%s') % set_year))
-    except OSError as e:
-        print("Failed to create directory")
+    # try:
+    #     if not (os.path.isdir((DIRECTORY + '/year=%s') % set_year)):
+    #         os.makedirs(os.path.join((DIRECTORY + '/year=%s') % set_year))
+    # except OSError as e:
+    #     print("Failed to create directory")
 
     # set range (startDt)
     script_startDt = "datePickerShow('startDt')"
@@ -120,14 +120,15 @@ def main():
     table = pd.DataFrame(results)
 
     # make month directory
-    RESULT_DIRECTORY = (DIRECTORY + '/year=%s' + '/month=%s') % (set_year, set_month)
-    try:
-        if not (os.path.isdir(RESULT_DIRECTORY)):
-            os.makedirs(os.path.join(RESULT_DIRECTORY))
-    except OSError as e:
-        print("Failed to create directory")
+    # RESULT_DIRECTORY = (DIRECTORY + '/year=%s' + '/month=%s') % (set_year, set_month)
+    # try:
+    #     if not (os.path.isdir(RESULT_DIRECTORY)):
+    #         os.makedirs(os.path.join(RESULT_DIRECTORY))
+    # except OSError as e:
+    #     print("Failed to create directory")
 
     day = '0' + str(set_day) if int(set_day) < 10 else str(set_day)
 
     # make csv file
-    table.to_csv(('{0}/workdate=%s%s.csv' %(today, day)).format(RESULT_DIRECTORY), encoding='utf-8')
+    table.to_csv(('{0}/workdate=%s%s.csv' %(today, day)).format(DIRECTORY), encoding='utf-8')
+
