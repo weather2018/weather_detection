@@ -4,14 +4,22 @@ import pandas as pd
 from itertools import count
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
+import os
 
 #조회 파라미터 셋팅
 def setPram(yyyy,mm,dd):
     chrome_options = Options()
     chrome_options.add_argument('--headless')
-    driver = webdriver.Chrome(executable_path='../chromedriver'
-                              # ,chrome_options=chrome_options
+
+    if os.name == 'nt':
+        driverPath='./driver/chromedriver.exe'
+    elif os.name=='posix':
+        driverPath='/home/datamaster/weather_detection/collect/driver/chromedriver'
+
+    driver = webdriver.Chrome(executable_path=driverPath
+                              ,chrome_options=chrome_options
                               )
+    driver.implicitly_wait(3)
     driver.get('https://data.kma.go.kr/data/grnd/selectAsosRltmList.do?pgmNo=36')
 
     #   1. set Search Type

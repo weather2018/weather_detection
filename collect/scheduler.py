@@ -7,13 +7,7 @@ from datetime import datetime, timedelta
 
 class Scheduler(object):
 
-    def __init__(self, hh=15, ss=16):
-        self.sched = BackgroundScheduler()
-        self.sched.start()
-        self.hh = hh
-        self.mm = ss
-        self.job_id = ''
-
+    def __init__(self, hh=9, mm=20):
         now = str(datetime.now() - timedelta(days=1))
         now = now.split(' ')
         yyyymmdd = now[0].replace('-', '')
@@ -22,6 +16,16 @@ class Scheduler(object):
                         'mm': yyyymmdd[4:6],  # str(int(yyyymmdd[4:6]) - 1),
                         'dd': yyyymmdd[6:8],  # str(int()),
                         'hhmm': hhmmss[0] + hhmmss[1]}
+
+        self.sched = BackgroundScheduler()
+        self.sched.start()
+        # self.hh = hh
+        # self.mm = mm
+
+        # 테스트 용이성 위해 사용
+        self.hh = int(self.timeDic['hhmm'][0:2])
+        self.mm = int(self.timeDic['hhmm'][2:4])+1
+        self.job_id = ''
 
     # 클래스가 종료될때, 모든 job들을 종료시켜줍니다.
     def __del__(self):
