@@ -11,6 +11,7 @@ def setPram(yyyy,mm,dd):
     chrome_options = Options()
     chrome_options.add_argument('--headless')
 
+    # os 종류에 따라 다른 드라이버 로드
     if os.name == 'nt':
         driverPath='./driver/chromedriver.exe'
     elif os.name=='posix':
