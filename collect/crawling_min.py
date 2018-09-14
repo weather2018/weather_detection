@@ -14,12 +14,13 @@ def setPram(yyyy,mm,dd):
     # os 종류에 따라 다른 드라이버 로드
     if os.name == 'nt':
         driverPath='./driver/chromedriver.exe'
-    elif os.name=='posix':
-        driverPath='/home/datamaster/weather_detection/collect/driver/chromedriver'
+        driver = webdriver.Chrome(executable_path=driverPath
+                                  , chrome_options=chrome_options
+                                  )
+    else:# os.name =='posix':
+        driverPath='/home/datamaster/weather_detection/collect/driver/phantomjs'
+        driver = webdriver.PhantomJS(executable_path=driverPath)
 
-    driver = webdriver.Chrome(executable_path=driverPath
-                              ,chrome_options=chrome_options
-                              )
     driver.implicitly_wait(3)
     driver.get('https://data.kma.go.kr/data/grnd/selectAsosRltmList.do?pgmNo=36')
 
@@ -112,11 +113,5 @@ def crawlingData(yyyy, mm, dd, driver):
     )
 
 def main(yyyy,mm,dd):
-    # cm = crawling_min()
     driver = setPram(yyyy, mm, dd)
     crawlingData(yyyy, mm, dd, driver)
-
-# if __name__=='__main__':
-#     cm = crawling_min()
-#     cm.setPram()
-#     cm.crawlingData()
