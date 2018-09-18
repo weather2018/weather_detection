@@ -47,7 +47,7 @@ class Scheduler(object):
         if type =='interval':
             self.sched.add_job(simulator.main,
                                trigger=type,
-                               seconds=5,
+                               seconds=60,
                                id=job_id,
                                args=(self.timeDic['yyyy'],
                                      self.timeDic['mm'],
@@ -89,8 +89,8 @@ def main(hh,ss):
 
 if __name__=='__main__':
     sched = Scheduler()
-    # sched.scheduler(type='interval',job_id='1')
-    sched.scheduler(type='cron',job_id='2')
+    sched.scheduler(type='interval',job_id='1')
+    #sched.scheduler(type='cron',job_id='2')
     # sched.scheduler(type='cron',job_id='3')
     while True:
         time.sleep(1)
