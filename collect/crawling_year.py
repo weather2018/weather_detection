@@ -1,9 +1,6 @@
 import time
-import pandas as pd
 from selenium import webdriver
-import os
 from pywinauto import Application
-import pywinauto.keyboard as keyboard
 
 def yungdo():
     # 용도신청
@@ -14,15 +11,25 @@ def yungdo():
         driver.execute_script('dataOrder()')
         time.sleep(10)
     except:
+        print('yungdo, 로그인 예외처리!')
         driver.find_element_by_xpath('/html/body/div[1]/div/div/div/div[3]/button').click()
         downloadClick(driver,1)
         time.sleep(10)
 
-    # app = pgmConnect()
-    # dlg=app['다른 이름으로 저장']
-    # dlg.SetFocus()
-    keyboard.SendKeys('{ESC}')
-    time.sleep(2)
+    try:
+        app = pgmConnect()
+        app.다른_이름으로_저장.Button2.click()
+        time.sleep(5)
+        app = Application().connect(title='다른 이름으로 저장', )
+        app.다른_이름으로_저장.Button2.click()
+        time.sleep(2)
+    except:
+        # print('saveCheck, %d라인, app connetct fail'%(j))
+        pass
+
+def downloadClick(driver,i):
+    driver.find_element_by_xpath('//*[@id="contentsList"]/tr[%d]/td[4]/input' % (i)).click()
+    time.sleep(5)
 
 def pgmConnect():
     try:
@@ -36,22 +43,36 @@ def pgmConnect():
         app = Application().connect(title='다른 이름으로 저장', )
     return app
 
-def downloadClick(driver,i):
-    driver.find_element_by_xpath('//*[@id="contentsList"]/tr[%d]/td[4]/input' % (i)).click()
-    time.sleep(8)
-
 def save(app,j):
-    time.sleep(2)
-    savePath = 'C:\DEV\PycharmProjects\weather2018\data\Y%s\%s_C%s_%s.csv' % \
+    savePath = 'D:\DEV\PycharmProjects\weather_detection\data\Y%s\%s_C%s_%s.csv' % \
                (str(year), str(year), str(locCode).zfill(4), attr)
     print(str(j),'라인: ',savePath)
     app.다른_이름으로_저장.Edit1.set_edit_text(savePath)
-    time.sleep(2)
-    # app.다른_이름으로_저장.Button1.click()
-    keyboard.SendKeys('{ENTER}')
-    time.sleep(2)
+    time.sleep(1)
+    app.다른_이름으로_저장.Button1.click()
+    # keyboard.SendKeys('{ENTER}')
+    time.sleep(1)
 
+def saveCheck():
+    try:
+        app = Application().connect(title='다른 이름으로 저장', )
+        app.다른_이름으로_저장.Button1.click()
+        # time.sleep(5)
+        # app = Application().connect(title='다른 이름으로 저장', )
+        # app.다른_이름으로_저장.Button1.click()
+        time.sleep(2)
+    except:
+        # print('saveCheck, %d라인, app connetct fail'%(j))
+        pass
 
+def cancelCheck():
+    try:
+        app = Application().connect(title='다른 이름으로 저장', )
+        app.다른_이름으로_저장.Button2.click()
+        time.sleep(2)
+    except:
+        # print('saveCheck, %d라인, app connetct fail'%(j))
+        pass
 
 # 드라이버 생성
 driverPath = './driver/chromedriver.exe'
@@ -64,6 +85,7 @@ time.sleep(2)
 id=driver.find_element_by_id('loginId')
 id.send_keys('moon_ki@naver.com')
 pw=driver.find_element_by_id('passwordNo')
+
 pw.send_keys('ansrl*6dls')
 driver.find_element_by_xpath('//*[@id="loginbtn"]').click()
 
@@ -77,7 +99,7 @@ driver.execute_script('fnStnConfirm()')
 # 지역 마스터 데이터 로드
 # locMst=pd.read_csv('../data/location_mst.csv',encoding='ms949')
 
-for year in range(2015, 2018):
+for year in range(2017,2018):
     # for month in range(1, 13):
     # start 파라미터
     driver.find_element_by_xpath('//*[@id="startDt"]/option[@value=' + str(year) + ']').click()
@@ -88,15 +110,29 @@ for year in range(2015, 2018):
     driver.find_element_by_xpath('//*[@id="endMt"]/option[@value=' + '12' + ']').click()
 
     # 지역 코드 선정을 위한 시퀀스 변수
-    locCode = 1
+    # 0부터 시작한다. 다시 시작할 경우, 지역의 처음 코드로 정한다.
+    locCode = 425
 
     # 지역 순차적으로 선택
     for spanId in [
-                   'ztree_2'
-                   #  ,'ztree_452','ztree_674','ztree_822','ztree_983',
-                   # 'ztree_1084','ztree_1169','ztree_1231','ztree_1249','ztree_1852',
-                   # 'ztree_2064','ztree_2232','ztree_2456','ztree_2713','ztree_3033',
-                   # 'ztree_3391','ztree_3722','ztree_3768'
+                   # 'ztree_2',     # 서울
+                   'ztree_452',   # 부산
+                   'ztree_674',   # 대구
+                   'ztree_822',   # 인천
+                   'ztree_983',   # 광주
+                   'ztree_1084',  # 대전
+                   'ztree_1169',  # 울산
+                   'ztree_1231',  # 세종
+                   'ztree_1249',  # 경기도
+                   'ztree_1852',  # 강원도
+                   'ztree_2064',  # 충청북도
+                   'ztree_2232',  # 충청남도
+                   'ztree_2456',  # 전라북도
+                   'ztree_2713',  # 전라남도
+                   'ztree_3033',  # 경상북도
+                   'ztree_3391',  # 경상남도
+                   'ztree_3722',  # 제주
+                   'ztree_3768'   # 이어도
     ]:
         element=driver.find_element_by_xpath('//*[@class="selectBtn1 btn btn-primary VAR3_BTN"]')
         driver.execute_script('arguments[0].click();',element)
@@ -105,9 +141,9 @@ for year in range(2015, 2018):
         driver.execute_script('fnStnConfirm()')
 
         # 조회
-        selectcnt=driver.find_element_by_xpath('//*[@id="schListCnt"]/option[6]').click() # 100개씩 뿌린다.
+        selectcnt=driver.find_element_by_xpath('//*[@id="schListCnt"]/option[1]').click() # 10개씩 뿌린다.
         driver.find_element_by_xpath('//*[@id="dsForm"]/div[3]/a/span').click()
-        time.sleep(2)
+        time.sleep(5)
 
         # 페이징 처리를 위한 변수 셋팅
         totCnt = driver.find_element_by_xpath('//*[@class="SEARCH_LIST_COUNT"]').text
@@ -126,24 +162,45 @@ for year in range(2015, 2018):
             downloadClick(driver, 1)
             yungdo()
 
+        # 페이징 처리 시, 마지막 더하기
+        if int(totCnt) % 10==0:
+            plus_p=1
+        else:
+            plus_p=2
 
         ####### 페이지별, 다운로드
-        for page in range(2,(int(totCnt)//100)+2):
-            for i in range(1, 200, 2):
+        for page in range(1,(int(totCnt)//10)+plus_p):
+            print('########### ',str(page),'페이지 실행',' ###########')
+            for i in range(1, 20, 2):
                 # 다운로드 클릭
-                downloadClick(driver,i)
-                try: # APP과 Connect
-                    app = pgmConnect()
+                try:
+                    downloadClick(driver,i)
                 except:
-                    time.sleep(5)
-                    app = pgmConnect()
-                save(app,j)
+                    break
+                # 다운로드창 Connetct
+                connectYN = True
+                tryCnt=1
+                while (connectYN):
+                    try:
+
+                        app = pgmConnect()
+                        connectYN = False
+                    except:
+                        connectYN = True
+                        tryCnt += 1
+                        pass
+
+                print('시도횟수: %d' % (tryCnt))
+                # 저장
+                save(app=app,j=j)
+                # 저장 확인
+                saveCheck()
 
                 j += 1
                 if j % 8 == 0:
                     attr = 'wsd' # 풍속
                 elif j % 8 ==1:
-                    locCode += 1    # 지역 변경
+                    locCode += 1 # 지역 변경
                     attr = 'pty' # 강수형태
                 elif j % 8 ==2:
                     attr = 'reh' # 습도
@@ -159,4 +216,4 @@ for year in range(2015, 2018):
                     attr = 'vec' # 풍향
 
             driver.find_element_by_xpath('//*[@title="다음페이지"]').click()
-            time.sleep(2)
+            time.sleep(3)
