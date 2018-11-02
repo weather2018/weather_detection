@@ -1,10 +1,6 @@
 import pandas as pd
-import os
 
-dateMst = pd.read_csv('../data/yyyymmdd.csv')
-dateCnt=dateMst.Y2015.count()
-
-def dataLoad(year,attr,locCode):
+def dataLoad(year,attr,locCode,dateMst):
     # 데이터 로드
     df = pd.read_csv('../data/Y%d/%d_C%s_%s.csv' % (year,year,str(locCode).zfill(4), attr))
     # 데이터 전처리
@@ -36,24 +32,24 @@ def main(year):
     vec = None
     wsd = None
     for locCode in range(1,3504):
-        # 데이터 로드
+        # 데이터 로드 & 전처리
         for attr in ['pty','reh','rn1','sky','t1h','lgt','vec','wsd']:
             if attr == 'pty':
-                pty = dataLoad(year=year, attr=attr, locCode=locCode)
+                pty = dataLoad(year=year, attr=attr, locCode=locCode, dateMst=dateMst)
             elif attr =='reh':
-                reh = dataLoad(year=year, attr=attr, locCode=locCode)
+                reh = dataLoad(year=year, attr=attr, locCode=locCode, dateMst=dateMst)
             elif attr =='rn1':
-                rn1 = dataLoad(year=year, attr=attr, locCode=locCode)
+                rn1 = dataLoad(year=year, attr=attr, locCode=locCode, dateMst=dateMst)
             elif attr =='sky':
-                sky = dataLoad(year=year, attr=attr, locCode=locCode)
+                sky = dataLoad(year=year, attr=attr, locCode=locCode, dateMst=dateMst)
             elif attr =='t1h':
-                t1h = dataLoad(year=year, attr=attr, locCode=locCode)
+                t1h = dataLoad(year=year, attr=attr, locCode=locCode, dateMst=dateMst)
             elif attr =='lgt':
-                lgt = dataLoad(year=year, attr=attr, locCode=locCode)
+                lgt = dataLoad(year=year, attr=attr, locCode=locCode, dateMst=dateMst)
             elif attr =='vec':
-                vec = dataLoad(year=year, attr=attr, locCode=locCode)
+                vec = dataLoad(year=year, attr=attr, locCode=locCode, dateMst=dateMst)
             elif attr =='wsd':
-                wsd = dataLoad(year=year, attr=attr, locCode=locCode)
+                wsd = dataLoad(year=year, attr=attr, locCode=locCode, dateMst=dateMst)
 
         # 데이터 조인
         tmpTable = pd.merge(pty,reh).merge(rn1).merge(sky).merge(t1h).merge(lgt).merge(vec).merge(wsd)
@@ -72,6 +68,8 @@ def main(year):
             break
 
 for year in range(2015,2016):
+    dateMst = pd.read_csv('../data/yyyymmdd.csv')
+    dateCnt = dateMst.Y2015.count()
     main(year=year)
 
 
