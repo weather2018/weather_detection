@@ -35,7 +35,7 @@ def pgmConnect():
     try:
         app = Application().connect(title='다른 이름으로 저장', )
     except:
-        time.sleep(20)
+        time.sleep(10)
         print('요청 실패에 따른 예외처리 시작!!')
         driver.find_element_by_xpath('/html/body/div[1]/div/div/div/div[3]/button').click()
         downloadClick(driver,i)
@@ -44,7 +44,7 @@ def pgmConnect():
     return app
 
 def save(app,j):
-    savePath = 'D:\DEV\PycharmProjects\weather_detection\data\Y%s\%s_C%s_%s.csv' % \
+    savePath = 'C:\DEV\PycharmProjects\weather2018\data\Y%s\%s_C%s_%s.csv' % \
                (str(year), str(year), str(locCode).zfill(4), attr)
     print(str(j),'라인: ',savePath)
     app.다른_이름으로_저장.Edit1.set_edit_text(savePath)
@@ -99,7 +99,7 @@ driver.execute_script('fnStnConfirm()')
 # 지역 마스터 데이터 로드
 # locMst=pd.read_csv('../data/location_mst.csv',encoding='ms949')
 
-for year in range(2017,2018):
+for year in range(2015,2016):
     # for month in range(1, 13):
     # start 파라미터
     driver.find_element_by_xpath('//*[@id="startDt"]/option[@value=' + str(year) + ']').click()
@@ -111,26 +111,26 @@ for year in range(2017,2018):
 
     # 지역 코드 선정을 위한 시퀀스 변수
     # 0부터 시작한다. 다시 시작할 경우, 지역의 처음 코드로 정한다.
-    locCode = 425
+    locCode = 3460
 
     # 지역 순차적으로 선택
     for spanId in [
                    # 'ztree_2',     # 서울
-                   'ztree_452',   # 부산
-                   'ztree_674',   # 대구
-                   'ztree_822',   # 인천
-                   'ztree_983',   # 광주
-                   'ztree_1084',  # 대전
-                   'ztree_1169',  # 울산
-                   'ztree_1231',  # 세종
-                   'ztree_1249',  # 경기도
-                   'ztree_1852',  # 강원도
-                   'ztree_2064',  # 충청북도
-                   'ztree_2232',  # 충청남도
-                   'ztree_2456',  # 전라북도
-                   'ztree_2713',  # 전라남도
-                   'ztree_3033',  # 경상북도
-                   'ztree_3391',  # 경상남도
+                   # 'ztree_452',   # 부산
+                   # 'ztree_674',   # 대구
+                   # 'ztree_822',   # 인천
+                   # 'ztree_983',   # 광주
+                   # 'ztree_1084',  # 대전
+                   # 'ztree_1169',  # 울산
+                   # 'ztree_1231',  # 세종
+                   # 'ztree_1249',  # 경기도
+                   # 'ztree_1852',  # 강원도
+                   # 'ztree_2064',  # 충청북도
+                   # 'ztree_2232',  # 충청남도
+                   # 'ztree_2456',  # 전라북도
+                   # 'ztree_2713',  # 전라남도
+                   # 'ztree_3033',  # 경상북도
+                   # 'ztree_3391',  # 경상남도
                    'ztree_3722',  # 제주
                    'ztree_3768'   # 이어도
     ]:
@@ -172,8 +172,8 @@ for year in range(2017,2018):
         for page in range(1,(int(totCnt)//10)+plus_p):
             print('########### ',str(page),'페이지 실행',' ###########')
             for i in range(1, 20, 2):
-                # 다운로드 클릭
                 try:
+                    # 다운로드 클릭
                     downloadClick(driver,i)
                 except:
                     break
@@ -182,7 +182,6 @@ for year in range(2017,2018):
                 tryCnt=1
                 while (connectYN):
                     try:
-
                         app = pgmConnect()
                         connectYN = False
                     except:
@@ -191,6 +190,7 @@ for year in range(2017,2018):
                         pass
 
                 print('시도횟수: %d' % (tryCnt))
+
                 # 저장
                 save(app=app,j=j)
                 # 저장 확인

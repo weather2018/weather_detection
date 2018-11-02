@@ -1,7 +1,7 @@
-# code = 1
-# for i in range(1,200,2):
-#     print(i)
-#     print(code)
-#     code += 1
+import numpy as np
+import pandas as pd
 
-print(3392 // 100)
+frame = pd.DataFrame(np.arange(9).reshape((3,3)), index=['a','b','c'], columns=['Ohio', 'Texas', 'Califormia'])
+print(frame)
+
+print(np.arange(9).reshape((3,3)))
