@@ -23,14 +23,6 @@ def preProcess(df,year,locCode, dateMst,attr):
     return df
 
 def main(year):
-    pty = pd.DataFrame()
-    reh = pd.DataFrame()
-    rn1 = None
-    sky = None
-    t1h = None
-    lgt = None
-    vec = None
-    wsd = None
     for locCode in range(1,3504):
         # 데이터 로드 & 전처리
         for attr in ['pty','reh','rn1','sky','t1h','lgt','vec','wsd']:
@@ -52,25 +44,35 @@ def main(year):
                 wsd = dataLoad(year=year, attr=attr, locCode=locCode, dateMst=dateMst)
 
         # 데이터 조인
-        tmpTable = pd.merge(pty,reh).merge(rn1).merge(sky).merge(t1h).merge(lgt).merge(vec).merge(wsd)
-        tmpCnt=tmpTable.YYYYMM.count()
-        # print(tmpTable)
+        try:
+            tmpTable = pd.merge(pty,reh).merge(rn1).merge(sky).merge(t1h).merge(lgt).merge(vec).merge(wsd)
+            tmpCnt = tmpTable.YYYYMM.count()
+            if (dateCnt == tmpCnt):
+                if locCode!=1:
+                        tmpTable.to_csv(
+                            '../data/%d_weather.csv' % (year),
+                            encoding='utf-8',
+                            mode='a',
+                            index=False,
+                            header=False
+                        )
+                else:
+                    if (dateCnt == tmpCnt):
+                        tmpTable.to_csv(
+                            '../data/%d_weather.csv' % (year),
+                            encoding='utf-8',
+                            mode='a',
+                            index=False,
+                            header=True
+                        )
+                print('년: %d, 지역: C%s, 건수: %d 적재 성공' % (year, str(locCode).zfill(4), tmpCnt))
+            else:
+                print('데이터누락이 발생!')
+                break
+        except:
+            print('공무원들의 실수로 인한 merge error!!')
 
-        if(dateCnt==tmpCnt):
-            tmpTable.to_csv(
-                '../data/Y%d/%d_weather.csv' % (year,year),
-                encoding='utf-8',
-                mode='a',
-                index=False
-            )
-            print('년: %d, 지역: C%s, 건수: %d 적재 성공' % (year, str(locCode).zfill(4),tmpCnt))
-        else:
-            print('데이터누락이 발생!')
-            break
-
-for year in range(2015,2016):
+for year in range(2015,2018):
     dateMst = pd.read_csv('../data/yyyymmdd.csv')
     dateCnt = dateMst.Y2015.count()
     main(year=year)
-
-
