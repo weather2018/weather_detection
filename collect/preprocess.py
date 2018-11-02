@@ -54,7 +54,7 @@ def main(year):
         # 데이터 조인
         tmpTable = pd.merge(pty,reh).merge(rn1).merge(sky).merge(t1h).merge(lgt).merge(vec).merge(wsd)
         tmpCnt=tmpTable.YYYYMM.count()
-        print(tmpTable)
+        # print(tmpTable)
 
         if(dateCnt==tmpCnt):
             tmpTable.to_csv(
@@ -63,8 +63,9 @@ def main(year):
                 mode='a',
                 index=False
             )
+            print('년: %d, 지역: C%s, 건수: %d 적재 성공' % (year, str(locCode).zfill(4),tmpCnt))
         else:
-            print('데이터누락이 발생했습니다.')
+            print('데이터누락이 발생!')
             break
 
 for year in range(2015,2016):
